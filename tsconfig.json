@@ -1,0 +1,19 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "outDir": "./dist",
+    "module": "commonjs",
+    "allowJs": true,
+    "target": "es5",
+    "sourceMap": true,
+    "types": [
+      "jasmine"
+    ]
+  },
+  "files": [
+    "src/app.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

@@ -1,0 +1,12 @@
+# Created by .ignore support plugin (hsz.mobi)
+
+# IntelliJ project files
+.idea
+/dist
+/coverage
+/node_modules
+/build
+*.log
+Thumbs.db
+out
+gen
