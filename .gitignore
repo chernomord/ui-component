@@ -5,7 +5,6 @@
 /dist
 /coverage
 /node_modules
-/build
 *.log
 Thumbs.db
 out

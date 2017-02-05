@@ -7,8 +7,14 @@
     "target": "es5",
     "sourceMap": true,
     "types": [
-      "jasmine"
-    ]
+      "jasmine",
+      "global.d.ts"
+    ],
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src"
+    ],
+    "jsx": "react"
   },
   "files": [
     "src/app.ts"

@@ -2,13 +2,14 @@
   "name": "diary",
   "version": "1.0.0",
   "description": "",
-  "main": "index.html",
+  "main": "./src/app.ts",
   "scripts": {
     "build": "node build/index.js",
     "test": "karma start karma.conf.js"
   },
   "author": "Slava",
   "license": "ISC",
+  "types": "./src/global.d.ts",
   "devDependencies": {
     "@types/jasmine": "^2.5.41",
     "html-webpack-plugin": "^2.26.0",

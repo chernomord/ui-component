@@ -8,6 +8,6 @@ module.exports = function (config) {
             "**/*.ts": ["karma-typescript"], // *.tsx for React Jsx
         },
         reporters: ["spec", "karma-typescript"],
-        browsers: ["PhantomJS"]
+        browsers: ["Chrome"]
     });
 };
