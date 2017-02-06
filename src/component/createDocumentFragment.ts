@@ -27,10 +27,17 @@ class AttributeModel {
         value = (value) ? value.trim() : undefined;
         this.value = (value) ? value.replace(/['"]+/g, '') : '';
     }
+
+    render () : Attr {
+        let attr = document.createAttribute(this.name);
+        attr.value = this.value;
+        return attr;
+    }
 }
 
 class NodeModel {
     parent: TagModel;
+    children: NodeModel[];
 
     constructor() {
     }
@@ -38,7 +45,8 @@ class NodeModel {
     parseHTML(HTMLString: string) {
     }
 
-    render() {
+    render() : Node {
+        return document.createElement('div');
     }
 }
 
@@ -49,7 +57,6 @@ class TextNodeModel extends NodeModel {
         super();
         this.parent = parent;
         this.parseHTML(HTMLString);
-        //parent.appendChild(this);
     }
 
     parseHTML(HTMLString: string) {
@@ -70,7 +77,7 @@ class TextNodeModel extends NodeModel {
 class TagModel extends NodeModel {
     name: string;
     attrs: AttributeModel[];
-    children: NodeModel[];
+    // children: NodeModel[];
 
     constructor(tagString: string, parent = null) {
         super();
@@ -143,6 +150,17 @@ class TagModel extends NodeModel {
 
     appendChild(element: NodeModel) {
         this.children.push(element);
+    }
+
+    render() : HTMLElement {
+        let element = document.createElement(this.name);
+        for (let attr of this.attrs) {
+            element.setAttributeNode(attr.render())
+        }
+        for (let child of this.children) {
+            element.appendChild(child.render());
+        }
+        return element;
     }
 }
 
