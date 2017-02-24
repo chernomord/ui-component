@@ -17,7 +17,7 @@ describe('Component class Class', () => {
         let post = new Component('<h1>{{message}}</h1>', {message: 'Zodzog!'});
         let element = post.render();
         root.appendChild(element);
-        console.log(element);
+        // console.log(element);
         expect(element instanceof HTMLElement).toBe(true);
     });
 

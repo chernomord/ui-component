@@ -1,4 +1,4 @@
-import {EventBindingsCollection, Handler} from './event-bindings-collection';
+// import {Handler} from './event-bindings-collection';
 
 export default class Component {
     constructor(private template: string, private data?: Object, private methods?: Object) {

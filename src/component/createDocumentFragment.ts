@@ -22,13 +22,17 @@ class AttributeModel {
     value: string;
 
     constructor(attr: string) {
+        this.parseAttribute(attr);
+    }
+
+    parseAttribute(attr: string) {
         let [name, value] = attr.split('=');
         this.name = name;
         value = (value) ? value.trim() : undefined;
         this.value = (value) ? value.replace(/['"]+/g, '') : '';
     }
 
-    render () : Attr {
+    render(): Attr {
         let attr = document.createAttribute(this.name);
         attr.value = this.value;
         return attr;
@@ -37,29 +41,31 @@ class AttributeModel {
 
 class NodeModel {
     parent: TagModel;
-    children: NodeModel[];
+    children: NodeModel[] = [];
 
     constructor() {
     }
 
-    parseHTML(HTMLString: string) {
+    parseHTML(HTMLString: string): void {
     }
 
-    render() : Node {
+    render(): Node {
         return document.createElement('div');
     }
 }
 
 class TextNodeModel extends NodeModel {
-    value: string;
+    // value: string;
+    // parent: TagModel;
 
-    constructor(HTMLString: string, parent: TagModel) {
+    constructor(public value: string,
+                public parent: TagModel) {
         super();
-        this.parent = parent;
-        this.parseHTML(HTMLString);
+        // this.parent = parent;
+        // this.parseHTML(HTMLString);
     }
 
-    parseHTML(HTMLString: string) {
+    parseHTML(HTMLString: string): void {
         let textEndId = HTMLString.indexOf('<');
         let textValue = HTMLString.substring(0, textEndId);
         let restOfHTML = HTMLString.substring(textEndId);
@@ -77,16 +83,16 @@ class TextNodeModel extends NodeModel {
 class TagModel extends NodeModel {
     name: string;
     attrs: AttributeModel[];
-    // children: NodeModel[];
+    // children = [];
 
     constructor(tagString: string, parent = null) {
         super();
-        this.children = [];
+        // this.children = [];
         this.parent = parent;
         this.parseHTML(tagString);
     }
 
-    parseTag(tagString: string) {
+    parseTag(tagString: string): void {
         let [match, tag, attributesStr] = tagString.match(/<(\w+)[\s+]?([^>]+)?>/);
         this.name = tag;
         this.attrs = [];
@@ -102,36 +108,36 @@ class TagModel extends NodeModel {
         }
     }
 
-    parseHTML(HTMLString: string) {
+    parseHTML(HTMLString: string): void {
         let curSegment = HTMLString.substring(0);
-        if (this.tagType(curSegment) === 1) {
-            // open tag
-            let closingIndex = curSegment.indexOf(">", 1);
-            let tag = curSegment.substring(0, closingIndex + 1);
-            this.parseTag(tag);
-            if (this.parent) {
-                this.parent.appendChild(this);
-            }
-            // add children
-            let restOfHTML = curSegment.substr(closingIndex + 1, curSegment.length);
-            // decide parent by current html element type
-            let parent: TagModel;
-            if (selfClosingTags.hasOwnProperty(this.name)) {
-                parent = this.parent;
-            } else {
-                parent = this;
-            }
-            new TagModel(restOfHTML, parent);
-        } else if (this.tagType(curSegment) === 2) {
-            // closing tag
-            let closingTagSliced = curSegment.replace(/^(<\/\w+[^])/, '');
-            new TagModel(closingTagSliced, this.parent.parent);
-        } else if (this.tagType(curSegment) === 3) {
-            new TextNodeModel(curSegment, this.parent);
+        switch (this.tagType(curSegment)) {
+            case 1 : // opening tag
+                // extract and parse tag string and append self to parent
+                let closingIndex = curSegment.indexOf(">", 1);
+                let tag = curSegment.substring(0, closingIndex + 1);
+                this.parseTag(tag);
+                if (this.parent) {
+                    this.parent.appendChild(this);
+                }
+                // create child from the rest of the HTML string
+                let restOfHTML = curSegment.substr(closingIndex + 1, curSegment.length);
+                let parent: TagModel;
+                (selfClosingTags.hasOwnProperty(this.name)) ? parent = this.parent : parent = this;
+                new TagModel(restOfHTML, parent);
+                break;
+            case 2 : // closing tag
+                let closingTagSliced = curSegment.replace(/^(<\/\w+[^])/, '');
+                new TagModel(closingTagSliced, this.parent.parent);
+                break;
+            case 3 : // text content
+                new TextNodeModel(curSegment, this.parent);
+                break;
+            default:
+                break;
         }
     }
 
-    tagType(HTMLString: string) {
+    tagType(HTMLString: string): number {
         enum Types {
             Open = 1,
             Closing,
@@ -148,11 +154,11 @@ class TagModel extends NodeModel {
         return Types[type]
     }
 
-    appendChild(element: NodeModel) {
+    appendChild(element: NodeModel): void {
         this.children.push(element);
     }
 
-    render() : HTMLElement {
+    render(): HTMLElement {
         let element = document.createElement(this.name);
         for (let attr of this.attrs) {
             element.setAttributeNode(attr.render())
@@ -164,4 +170,4 @@ class TagModel extends NodeModel {
     }
 }
 
-export {TagModel}
+export {TagModel, TextNodeModel, AttributeModel, NodeModel}

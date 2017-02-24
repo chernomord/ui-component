@@ -1,4 +1,4 @@
-import {TagModel} from './createDocumentFragment';
+import {Parser} from './parser';
 
 let cache = [];
 function censorCircular(key, value) {
@@ -11,15 +11,38 @@ function censorCircular(key, value) {
     return value;
 }
 
-describe('DOM Model', () => {
+describe('Parser', () => {
 
-    // it('can parse self closing tag', () => {
-    //     let tag = new TagModel('<p class="zod-zog">');
-    //     // console.log(JSON.stringify(tag, null, 2));
-    //     expect(tag.attrs.length).toBe(1);
-    //     expect(tag instanceof TagModel).toBe(true);
-    // });
-    //
+    it('cat extract Tag', () => {
+        let parser = new Parser();
+        let {tag, restOfHTML} = parser.extractTag(`<div class="some">Text<span>and more</span></div>`);
+        expect(tag).toEqual('<div class="some">');
+        expect(restOfHTML).toEqual('Text<span>and more</span></div>');
+    });
+
+    it('cat extract closing Tag', () => {
+        let parser = new Parser();
+        let {tag, restOfHTML} = parser.extractTag(`</section><div class="some">Text<span>and more</span></div>`);
+        expect(tag).toEqual('</section>');
+        expect(restOfHTML).toEqual('<div class="some">Text<span>and more</span></div>');
+    });
+
+    it('cat extract text content', () => {
+        let parser = new Parser();
+        let {textValue, restOfHTML} = parser.extractTextContent(`Some text here</section><div class="some">Text<span>and more</span></div>`);
+        expect(textValue).toEqual('Some text here');
+        expect(restOfHTML).toEqual('</section><div class="some">Text<span>and more</span></div>');
+    });
+
+    // todo: add more test for parser
+
+    it('can parse TextNode fragment', () => {
+        let parser = new Parser();
+        let textNode = parser.parseTextNodeFragment('Text node<div>Not to be<span>parsed</span></div>');
+        expect(textNode.value).toEqual('Text node');
+        expect(textNode.render() instanceof Node).toBe(true);
+    });
+
     // it('can return proper tag type', () => {
     //     let tag = new TagModel(`<div></div>`);
     //     // console.log(JSON.stringify(tag, censorCircular, 2));
