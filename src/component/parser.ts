@@ -1,9 +1,9 @@
-import {TagModel, AttributeModel, NodeModel, TextNodeModel} from './createDocumentFragment';
+import {TagModel, AttributeModel, NodeModel, TextNodeModel} from './DOMModel';
 
 /**
- * HTML string parser. Transform HTML string into virtual DOM representations
+ * HTML string parser. Transforms HTML string into virtual DOM representations
  */
-class Parser {
+class HTMLParser {
     constructor() {
 
     }
@@ -59,6 +59,29 @@ class Parser {
         return {textValue, restOfHTML}
     }
 
+    /**
+     *
+     * @param tagString
+     * @returns {{tagName: string, attrs: string[]}}
+     */
+    parseTag(tagString: string) {
+        let tagName: string;
+        let attrs: string[] = [];
+        let [match, tag, attributesStr] = tagString.match(/<(\w+)[\s+]?([^>]+)?>/);
+        tagName = tag;
+        if (attributesStr) {
+            let attrStrings = [];
+            attributesStr.replace(/(\w+[$="]\D[^"]*["])/g, (match, g1) => {
+                attrStrings.push(g1);
+                return match;
+            });
+            for (let attr of attrStrings) {
+                attrs.push(attr);
+            }
+        }
+        return {tagName, attrs}
+    }
+
 }
 
-export {Parser}
+export {HTMLParser}

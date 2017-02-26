@@ -1,4 +1,4 @@
-import {Parser} from './parser';
+import {HTMLParser} from './parser';
 
 let cache = [];
 function censorCircular(key, value) {
@@ -11,33 +11,44 @@ function censorCircular(key, value) {
     return value;
 }
 
-describe('Parser', () => {
+describe('DOMParser', () => {
 
     it('cat extract Tag', () => {
-        let parser = new Parser();
+        let parser = new HTMLParser();
         let {tag, restOfHTML} = parser.extractTag(`<div class="some">Text<span>and more</span></div>`);
         expect(tag).toEqual('<div class="some">');
         expect(restOfHTML).toEqual('Text<span>and more</span></div>');
     });
 
     it('cat extract closing Tag', () => {
-        let parser = new Parser();
+        let parser = new HTMLParser();
         let {tag, restOfHTML} = parser.extractTag(`</section><div class="some">Text<span>and more</span></div>`);
         expect(tag).toEqual('</section>');
         expect(restOfHTML).toEqual('<div class="some">Text<span>and more</span></div>');
     });
 
     it('cat extract text content', () => {
-        let parser = new Parser();
+        let parser = new HTMLParser();
         let {textValue, restOfHTML} = parser.extractTextContent(`Some text here</section><div class="some">Text<span>and more</span></div>`);
         expect(textValue).toEqual('Some text here');
         expect(restOfHTML).toEqual('</section><div class="some">Text<span>and more</span></div>');
     });
 
+    it('cat parse tag', () => {
+        let parser = new HTMLParser();
+        let tagWithAttrs = `<div style="display: block; border: 0;" class="one two">`;
+        let emptyTag = `<input>`;
+        let {tagName, attrs} = parser.parseTag(tagWithAttrs);
+        expect(tagName).toEqual('div');
+        expect(attrs.length).toEqual(2);
+        expect(attrs[0]).toEqual('style="display: block; border: 0;"');
+        expect(attrs[1]).toEqual('class="one two"');
+    });
+
     // todo: add more test for parser
 
     it('can parse TextNode fragment', () => {
-        let parser = new Parser();
+        let parser = new HTMLParser();
         let textNode = parser.parseTextNodeFragment('Text node<div>Not to be<span>parsed</span></div>');
         expect(textNode.value).toEqual('Text node');
         expect(textNode.render() instanceof Node).toBe(true);
