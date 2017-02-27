@@ -1,22 +1,3 @@
-enum selfClosingTags  {
-    'area',
-    'base',
-    'br',
-    'col',
-    'command',
-    'embed',
-    'hr',
-    'img',
-    'input',
-    'keygen',
-    'link',
-    'meta',
-    'param',
-    'source',
-    'track',
-    'wbr',
-}
-
 /**
  * Describes attribute
  */
@@ -43,6 +24,9 @@ class AttributeModel {
 class NodeModel {
     parent: TagModel;
     children: NodeModel[];
+    attrs: AttributeModel[];
+    name: string;
+    value: string;
 
     constructor() {
     }
@@ -50,7 +34,7 @@ class NodeModel {
     /**
      * Renders node into DOM Node object
      */
-    render() : Node {
+    render(): Node {
         return
     }
 
@@ -105,7 +89,7 @@ class TagModel extends NodeModel {
     render(): HTMLElement {
         let element = document.createElement(this.name);
         for (let attr of this.attrs) {
-            element.setAttributeNode(attr.render())
+            element.setAttributeNode(attr.render());
         }
         for (let child of this.children) {
             element.appendChild(child.render());
