@@ -36,14 +36,15 @@ describe('DOMParser', () => {
 
     it('can parse tag', () => {
         let parser = new HTMLParser();
-        let tagWithAttrs = `<div style="display: block; border: 0;" class="one two">`;
+        let tagWithAttrs = `<div style="display: block; border: 0;" class="one two" on:click="something()">`;
         let emptyTag = `<input>`;
         let tagModel = parser.parseTag(tagWithAttrs);
         let inputModel = parser.parseTag(emptyTag);
         expect(tagModel.name).toEqual('div');
-        expect(tagModel.attrs.length).toEqual(2);
+        expect(tagModel.attrs.length).toEqual(3);
         expect(tagModel.attrs[0].name).toEqual('style');
         expect(tagModel.attrs[1].value).toEqual('one two');
+        expect(tagModel.attrs[2].name).toEqual('on:click');
         expect(inputModel.name).toEqual('input');
     });
 

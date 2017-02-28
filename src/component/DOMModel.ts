@@ -1,4 +1,11 @@
 /**
+ * Abstract Controller
+ */
+class Controller {
+    constructor() {}
+}
+
+/**
  * Describes attribute
  */
 class AttributeModel {
@@ -34,7 +41,7 @@ class NodeModel {
     /**
      * Renders node into DOM Node object
      */
-    render(): Node {
+    render(controller: Controller = null): Node {
         return
     }
 
@@ -65,6 +72,7 @@ class TextNodeModel extends NodeModel {
  * Describes Element Node model
  */
 class TagModel extends NodeModel {
+    controller: Controller;
 
     constructor(public name: string,
                 public attrs: AttributeModel[] = [],
@@ -86,16 +94,24 @@ class TagModel extends NodeModel {
      * Render self and all it's children if there is any
      * @returns {HTMLElement}
      */
-    render(): HTMLElement {
+    render(controller: Controller = null): HTMLElement {
         let element = document.createElement(this.name);
         for (let attr of this.attrs) {
-            element.setAttributeNode(attr.render());
+            if (attr.name.indexOf('on') === 0) {
+                let eventName = 'on' + attr.name.substring(3);
+                let [fm, methodName] = attr.value.match(/(\w+)/);
+                element[eventName] = (event) => {
+                    controller[methodName]();
+                }
+            } else {
+                element.setAttributeNode(attr.render());
+            }
         }
         for (let child of this.children) {
-            element.appendChild(child.render());
+            element.appendChild(child.render(controller));
         }
         return element;
     }
 }
 
-export {TagModel, TextNodeModel, AttributeModel, NodeModel}
+export {TagModel, TextNodeModel, AttributeModel, NodeModel, Controller}

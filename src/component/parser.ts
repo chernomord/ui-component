@@ -106,7 +106,7 @@ class HTMLParser {
         let [match, tag, attributesStr] = tagString.match(/<(\w+)[\s+]?([^>]+)?>/);
         if (attributesStr) {
             let attrStrings = [];
-            attributesStr.replace(/(\w+[$="]\D[^"]*["])/g, (match, attrFrag) => {
+            attributesStr.replace(/((on:)?\w+[$="]\D[^"]*["])/g, (match, attrFrag) => {
                 attrStrings.push(this.parseAttribute(attrFrag));
                 return match;
             });

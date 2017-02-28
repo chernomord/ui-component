@@ -1,4 +1,4 @@
-import {TagModel, AttributeModel, TextNodeModel} from './DOMModel';
+import {TagModel, AttributeModel, TextNodeModel, Controller} from './DOMModel';
 
 let cache = [];
 function censorCircular(key, value) {
@@ -68,19 +68,26 @@ describe('Tag Node model', () => {
     });
 
     it('should bind event handler', () => {
-        let attr = new AttributeModel('n:click', 'doIncrement()');
+        let div = new TagModel('div');
+        let attr = new AttributeModel('on:click', 'doIncrement()');
         let tag = new TagModel('button', [attr]);
-        class Controller {
+        div.appendChild(tag);
+        class Bindings extends Controller{
             increment = 0;
-            constructor() {}
+            constructor() {
+                super();
+            }
+
             doIncrement() {
                 this.increment += 1;
             }
         }
-        let bindings = new Controller();
-        bindings.doIncrement();
-        let element = tag.render(bindings);
-        element.click();
+        let bindings = new Bindings();
+        let element = div.render(bindings);
+        let button = element.querySelector('button');
+        button.click();
         expect(bindings.increment).toEqual(1);
+        button.click();
+        expect(bindings.increment).toEqual(2);
     })
 });
