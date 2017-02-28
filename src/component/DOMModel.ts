@@ -92,12 +92,13 @@ class TagModel extends NodeModel {
 
     /**
      * Render self and all it's children if there is any
+     * @param controller {Controller}
      * @returns {HTMLElement}
      */
-    render(controller: Controller = null): HTMLElement {
+    render(controller: Controller): HTMLElement {
         let element = document.createElement(this.name);
         for (let attr of this.attrs) {
-            if (attr.name.indexOf('on') === 0) {
+            if (attr.name.indexOf('on:') === 0) {
                 let eventName = 'on' + attr.name.substring(3);
                 let [fm, methodName] = attr.value.match(/(\w+)/);
                 element[eventName] = (event) => {
