@@ -64,7 +64,23 @@ describe('Tag Node model', () => {
 
     it('should properly render itseld', () => {
         let html = rootTagModel.render();
-        console.log(html);
         expect(html.innerText).toEqual('child text');
     });
+
+    it('should bind event handler', () => {
+        let attr = new AttributeModel('n:click', 'doIncrement()');
+        let tag = new TagModel('button', [attr]);
+        class Controller {
+            increment = 0;
+            constructor() {}
+            doIncrement() {
+                this.increment += 1;
+            }
+        }
+        let bindings = new Controller();
+        bindings.doIncrement();
+        let element = tag.render(bindings);
+        element.click();
+        expect(bindings.increment).toEqual(1);
+    })
 });
