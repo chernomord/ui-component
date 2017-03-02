@@ -100,12 +100,14 @@ class TagModel extends NodeModel {
         let element = document.createElement(this.name);
         // add event handlers
         for (let attr of this.attrs) {
+            // handle attribute if it is event handler declaration
             if (attr.name.indexOf('on:') === 0) {
                 let eventName = 'on' + attr.name.substring(3);
                 let [fm, methodName, parameters] = attr.value.match(/(\w+)\((.*?)\)/);
                 let paramsArray = parameters.replace(/\s/g, '').split(',');
                 element[eventName] = function (event) {
 
+                    // convert parameters names to point to controller's properties
                     for (let i in paramsArray) {
                         if (paramsArray[i] === '$event') {
                             paramsArray[i] = event;
@@ -114,7 +116,7 @@ class TagModel extends NodeModel {
                             paramsArray[i] = controller[paramsArray[i]];
                         }
                     }
-
+                    // call controller's method by extracted name with extracted parameters
                     controller[methodName].apply(controller, paramsArray);
                 }
             } else {
