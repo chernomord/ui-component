@@ -95,7 +95,7 @@ class TagModel extends NodeModel {
      * @param controller {Controller}
      * @returns {HTMLElement}
      */
-    render(controller: Controller): HTMLElement {
+    render(controller: Controller = null): HTMLElement {
         let element = document.createElement(this.name);
         for (let attr of this.attrs) {
             if (attr.name.indexOf('on:') === 0) {

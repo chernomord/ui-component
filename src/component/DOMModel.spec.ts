@@ -62,7 +62,7 @@ describe('Tag Node model', () => {
         expect(childTagModel.getParent().name).toBe('div');
     });
 
-    it('should properly render itseld', () => {
+    it('should properly render itself', () => {
         let html = rootTagModel.render();
         expect(html.innerText).toEqual('child text');
     });
@@ -72,8 +72,9 @@ describe('Tag Node model', () => {
         let attr = new AttributeModel('on:click', 'doIncrement()');
         let tag = new TagModel('button', [attr]);
         div.appendChild(tag);
-        class Bindings extends Controller{
+        class Bindings extends Controller {
             increment = 0;
+
             constructor() {
                 super();
             }
@@ -89,5 +90,33 @@ describe('Tag Node model', () => {
         expect(bindings.increment).toEqual(1);
         button.click();
         expect(bindings.increment).toEqual(2);
+    });
+
+    it('should inject DOM Event and other requested parameters into handler', () => {
+        let div = new TagModel('div');
+        let attr = new AttributeModel('on:click', 'handler($event, intValue, stringValue)');
+        let tag = new TagModel('button', [attr]);
+        div.appendChild(tag);
+        class Bindings extends Controller {
+            intValue = 0;
+            stringValue = 'Hello!';
+            result: {event: Event, int: Number, string: string};
+
+            constructor() {
+                super();
+            }
+
+            handler(event: Event, int: Number, string: string) {
+                this.result = {event, int, string};
+                console.log(this.result);
+            }
+        }
+        let bindings = new Bindings();
+        let element = div.render(bindings);
+        let button = element.querySelector('button');
+        button.click();
+        expect(bindings.result.event instanceof Event).toBeTruthy();
+        expect(bindings.result.int === 0).toBeTruthy();
+        expect(bindings.result.string === 'Hello!').toBeTruthy();
     })
 });
