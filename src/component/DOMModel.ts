@@ -2,7 +2,8 @@
  * Abstract Controller
  */
 class Controller {
-    constructor() {}
+    constructor() {
+    }
 }
 
 /**
@@ -97,12 +98,24 @@ class TagModel extends NodeModel {
      */
     render(controller: Controller = null): HTMLElement {
         let element = document.createElement(this.name);
+        // add event handlers
         for (let attr of this.attrs) {
             if (attr.name.indexOf('on:') === 0) {
                 let eventName = 'on' + attr.name.substring(3);
-                let [fm, methodName] = attr.value.match(/(\w+)/);
-                element[eventName] = (event) => {
-                    controller[methodName]();
+                let [fm, methodName, parameters] = attr.value.match(/(\w+)\((.*?)\)/);
+                let paramsArray = parameters.replace(/\s/g, '').split(',');
+                element[eventName] = function (event) {
+
+                    for (let i in paramsArray) {
+                        if (paramsArray[i] === '$event') {
+                            paramsArray[i] = event;
+                            console.log(paramsArray[i]);
+                        } else {
+                            paramsArray[i] = controller[paramsArray[i]];
+                        }
+                    }
+
+                    controller[methodName].apply(controller, paramsArray);
                 }
             } else {
                 element.setAttributeNode(attr.render());
