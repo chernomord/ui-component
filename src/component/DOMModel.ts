@@ -105,15 +105,19 @@ class TagModel extends NodeModel {
                 let eventName = 'on' + attr.name.substring(3);
                 let [fm, methodName, parameters] = attr.value.match(/(\w+)\((.*?)\)/);
                 let paramsArray = parameters.replace(/\s/g, '').split(',');
-                element[eventName] = function (event) {
-
+                element[eventName] = function (this, event) {
                     // convert parameters names to point to controller's properties
                     for (let i in paramsArray) {
-                        if (paramsArray[i] === '$event') {
-                            paramsArray[i] = event;
-                            console.log(paramsArray[i]);
-                        } else {
-                            paramsArray[i] = controller[paramsArray[i]];
+                        switch (paramsArray[i]) {
+                            case '$event':
+                                paramsArray[i] = event;
+                                break;
+                            case '$this':
+                                paramsArray[i] = this;
+                                break;
+                            default:
+                                paramsArray[i] = controller[paramsArray[i]];
+                                break;
                         }
                     }
                     // call controller's method by extracted name with extracted parameters

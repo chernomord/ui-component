@@ -94,20 +94,20 @@ describe('Tag Node model', () => {
 
     it('should inject DOM Event and other requested parameters into handler', () => {
         let div = new TagModel('div');
-        let attr = new AttributeModel('on:click', 'handler($event, intValue, stringValue)');
+        let attr = new AttributeModel('on:click', 'handler($this, $event, intValue, stringValue)');
         let tag = new TagModel('button', [attr]);
         div.appendChild(tag);
         class Bindings extends Controller {
             intValue = 0;
             stringValue = 'Hello!';
-            result: {event: Event, int: Number, string: string};
+            result: {elm: HTMLElement, event: Event, int: Number, string: string};
 
             constructor() {
                 super();
             }
 
-            handler(event: Event, int: Number, string: string) {
-                this.result = {event, int, string};
+            handler(elm: HTMLElement, event: Event, int: Number, string: string) {
+                this.result = {elm, event, int, string};
                 console.log(this.result);
             }
         }
@@ -115,6 +115,7 @@ describe('Tag Node model', () => {
         let element = div.render(bindings);
         let button = element.querySelector('button');
         button.click();
+        expect(bindings.result.elm instanceof HTMLElement).toBeTruthy();
         expect(bindings.result.event instanceof Event).toBeTruthy();
         expect(bindings.result.int === 0).toBeTruthy();
         expect(bindings.result.string === 'Hello!').toBeTruthy();
