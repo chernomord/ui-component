@@ -1,4 +1,4 @@
-import {TagModel, AttributeModel, NodeModel, TextNodeModel} from './DOMModel';
+import {TagModel, AttributeModel, TextNodeModel} from './DOMModel';
 
 enum selfClosingTags  {
     'area',

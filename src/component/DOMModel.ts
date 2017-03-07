@@ -1,10 +1,6 @@
-/**
- * Abstract Controller
- */
-class Controller {
-    constructor() {
-    }
-}
+import {Controller} from './controller';
+import {parseBits} from './parseBits';
+
 
 /**
  * Describes attribute
@@ -19,9 +15,9 @@ class AttributeModel {
      * Returns attribute Node
      * @returns {Attr}
      */
-    render(): Attr {
+    render(controller: Controller): Attr {
         let attr = document.createAttribute(this.name);
-        attr.value = this.value;
+        attr.value = parseBits.curlyBindings(this.value, controller);
         return attr;
     }
 }
@@ -64,8 +60,10 @@ class TextNodeModel extends NodeModel {
         super();
     }
 
-    render(): Node {
-        return document.createTextNode(this.value);
+    render(controller: Controller): Node {
+        let $textNode = document.createTextNode('');
+        $textNode.nodeValue = parseBits.curlyBindings(this.value, controller);
+        return $textNode;
     }
 }
 
@@ -124,7 +122,7 @@ class TagModel extends NodeModel {
                     controller[methodName].apply(controller, paramsArray);
                 }
             } else {
-                element.setAttributeNode(attr.render());
+                element.setAttributeNode(attr.render(controller));
             }
         }
         for (let child of this.children) {

@@ -109,7 +109,6 @@ describe('Tag Node model', () => {
 
             handler(elm: HTMLElement, event: Event, int: Number, string: string) {
                 this.result = {elm, event, int, string};
-                console.log(this.result);
             }
         }
         let bindings = new Bindings();
@@ -123,25 +122,21 @@ describe('Tag Node model', () => {
     });
 
     it('should parse data bindings', () => {
-        let HTML = `<div class="{{component}}"><h1>{{header}}</h1><a href="{{link.href}}">{{link.name}}</a></div>`;
+        let HTML = `<div class="{{component}}"><h1>{{header}} bro!</h1><a href="{{link.href}}">{{link.name}}</a></div>`;
         class Bindings extends Controller {
             component = 'myComponent';
             header = 'Hey there';
             link = {
                 href: 'http://myurl.com',
                 name: 'my dynamic link'
-            };
-
-            constructor() {
-                super();
             }
         }
         let parser = new HTMLParser();
         let model = parser.parseHTML(HTML);
         let controller = new Bindings();
         let element = model.render(controller);
-        expect(element.classList.contains('myComponent')).toBeTruthy();
-        expect(element.childNodes[0].textContent).toBe(controller.header);
+        expect(element.getAttribute('class')).toBe('myComponent');
+        expect(element.childNodes[0].textContent).toBe(controller.header + ' bro!');
         expect(element.childNodes[1].textContent).toBe(controller.link.name);
         expect(element.childNodes[1].getAttribute('href')).toBe(controller.link.href);
     });

@@ -4,8 +4,8 @@ import {Controller} from './component/DOMModel';
 let parser = new HTMLParser();
 let template = `<section>
 <div>
-<h1>UI testing starts here 1</h1>
-<h2>Tags testing block</h2>
+<h1>{{title}}</h1>
+<h2>{{subtitle}}</h2>
 <form>
     <div>
     <label for="text-input">Some label</label>
@@ -19,27 +19,17 @@ let template = `<section>
 
 
 class TestCtrl extends Controller {
-    constructor(){
-        super();
-    }
+    title = "Test playground";
+    subtitle = "Just to see results on the screen aside from tests";
     hello() {
         alert('Hello!');
     }
 }
 
-console.time('parse');
+
 let model = parser.parseHTML(template);
-console.timeEnd('parse');
-console.time('render');
 let controller = new TestCtrl();
+console.log(controller);
 let element = model.render(controller);
-console.timeEnd('render');
 
 document.body.appendChild(element);
-//
-// document.addEventListener('load', () => {
-//     // let app = document.createElement('div');
-//     document.body.appendChild(element);
-//     // console.log('lol');
-// });
-//
