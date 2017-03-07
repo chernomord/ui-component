@@ -59,8 +59,6 @@ describe('DOMParser', () => {
         let HTML = `<p class=" zod-zog some " style="border: red;" /><input type="number"><span data=""><b>sdfsdf</b>Some text</span><b>about</b> tags</p>`;
         let parser = new HTMLParser();
         let model = parser.parseHTML(HTML);
-        // console.log('model', model.render());
-        // console.log(JSON.stringify(model, censorCircular, 2));
         expect(model.attrs[1].name).toBe('style');
         expect(model.children[0].attrs[0].name).toBe('type');
         expect(model.children.length).toBe(4);
@@ -76,4 +74,5 @@ describe('DOMParser', () => {
         expect(tag.tagType('text<p>')).toBe(3);
         expect(tag.tagType('text</p>')).toBe(3);
     });
+
 });
