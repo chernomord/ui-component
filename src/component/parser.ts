@@ -57,6 +57,11 @@ class HTMLParser {
                 case 2 : // closing tag
                     let a = this.extractTag(curSegment);
                     currentParent = currentParent.parent;
+                    if (!currentParent) {
+                        console.warn('Multiple root elements present!');
+                        curSegment = '';
+                        break;
+                    }
                     curSegment = a.restOfHTML;
                     break;
                 case 3 : // text content

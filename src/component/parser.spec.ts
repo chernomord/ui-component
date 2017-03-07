@@ -1,4 +1,5 @@
 import {HTMLParser} from './parser';
+import {Controller} from './controller';
 
 let cache = [];
 function censorCircular(key, value) {
@@ -73,6 +74,15 @@ describe('DOMParser', () => {
         expect(tag.tagType('</div>')).toBe(2);
         expect(tag.tagType('text<p>')).toBe(3);
         expect(tag.tagType('text</p>')).toBe(3);
+    });
+
+    it('should not result in error if multiple root elements passed in a string template', () => {
+       let template = `<div><h1>Header</h1></div><h1></h1><section><div></div></section>`;
+       let parser = new HTMLParser();
+       let model = parser.parseHTML(template);
+       let element = model.render(new Controller);
+       expect(element instanceof HTMLElement).toBeTruthy();
+       expect(element.childNodes.length).toBe(1);
     });
 
 });

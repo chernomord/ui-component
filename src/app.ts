@@ -29,7 +29,6 @@ class TestCtrl extends Controller {
 
 let model = parser.parseHTML(template);
 let controller = new TestCtrl();
-console.log(controller);
 let element = model.render(controller);
 
 document.body.appendChild(element);
