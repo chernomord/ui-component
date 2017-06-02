@@ -102,7 +102,7 @@ class TagModel extends NodeModel {
             if (attr.name.indexOf('on:') === 0) {
                 let eventName = 'on' + attr.name.substring(3);
                 let [fm, methodName, parameters] = attr.value.match(/(\w+)\((.*?)\)/);
-                let paramsArray = parameters.replace(/\s/g, '').split(',');
+                let paramsArray = parameters.replace(/\s/gm, '').split(',');
                 element[eventName] = function (this, event) {
                     // convert parameters names to point to controller's properties
                     for (let i in paramsArray) {

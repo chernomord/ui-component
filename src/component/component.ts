@@ -13,7 +13,7 @@ export default class Component {
         let container = document.createElement('div');
 
         // resolve one way data binding
-        let XMLstringWData = this.template.replace(/{{(.*?)}}/g, (fragment, contents) => {
+        let XMLstringWData = this.template.replace(/{{(.*?)}}/gm, (fragment, contents) => {
             let result = '';
             let content = contents.trim();
             if (this.data.hasOwnProperty(content)) {
@@ -29,7 +29,7 @@ export default class Component {
         let event = '';
         let method = '';
 
-        XMLstringWData = XMLstringWData.replace(/e-on:(...+)="(...+)\((...+)\)"/g, (fragment, evName, callbackName, args) => {
+        XMLstringWData = XMLstringWData.replace(/e-on:(...+)="(...+)\((...+)\)"/gm, (fragment, evName, callbackName, args) => {
             let argsList = args.replace(/\s+/g, '').split(',');
             let result = '';
             result = 'id=abc';

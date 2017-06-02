@@ -1,9 +1,5 @@
 /**
  * Abstract Controller
  */
-class Controller {
-    constructor() {
-    }
+export class Controller {
 }
-
-export {Controller}

@@ -1,4 +1,8 @@
-import {TagModel, AttributeModel, TextNodeModel} from './DOMModel';
+import {
+    AttributeModel,
+    TagModel,
+    TextNodeModel,
+} from './DOMModel';
 
 enum selfClosingTags  {
     'area',
@@ -22,26 +26,23 @@ enum selfClosingTags  {
 /**
  * HTML string parser. Transforms HTML string into virtual DOM representation based on DOMModel module classes
  */
-class HTMLParser {
-    selfClosingTags = selfClosingTags;
-
-    constructor() {
-    }
+export class HTMLParser {
+    public selfClosingTags = selfClosingTags;
 
     /**
      * Parse HTML string into DOM Model Tree
      * @param html
      * @returns {TagModel}
      */
-    parseHTML(html: string): TagModel {
+    public parseHTML(html: string): TagModel {
         let curSegment = html.substring(0);
-        let currentParent: TagModel = undefined;
+        let currentParent: TagModel;
         let modelRoot: TagModel;
         while (curSegment.length > 0) {
             switch (this.tagType(curSegment)) {
                 case 1 : // opening tag
-                    let {result, restOfHTML} = this.extractTag(curSegment);
-                    let tag = this.parseTag(result);
+                    const {result, restOfHTML} = this.extractTag(curSegment);
+                    const tag = this.parseTag(result);
                     if (currentParent) {
                         currentParent.appendChild(tag);
                     }
@@ -55,7 +56,7 @@ class HTMLParser {
                     curSegment = restOfHTML;
                     break;
                 case 2 : // closing tag
-                    let a = this.extractTag(curSegment);
+                    const a = this.extractTag(curSegment);
                     currentParent = currentParent.parent;
                     if (!currentParent) {
                         console.warn('Multiple root elements present!');
@@ -65,8 +66,8 @@ class HTMLParser {
                     curSegment = a.restOfHTML;
                     break;
                 case 3 : // text content
-                    let b = this.extractTextContent(curSegment);
-                    let textNode = this.parseText(b.result);
+                    const b = this.extractTextContent(curSegment);
+                    const textNode = this.parseText(b.result);
                     currentParent.appendChild(textNode);
                     curSegment = b.restOfHTML;
                     break;
@@ -74,7 +75,7 @@ class HTMLParser {
                     break;
             }
         }
-        return modelRoot
+        return modelRoot;
     }
 
     /**
@@ -82,11 +83,11 @@ class HTMLParser {
      * @param html
      * @returns {{result: string, restOfHTML: string}}
      */
-    extractTag(html: string) {
-        let closingIndex = html.indexOf(">", 1);
-        let result = html.substring(0, closingIndex + 1);
-        let restOfHTML = html.substr(closingIndex + 1, html.length);
-        return {result, restOfHTML}
+    public extractTag(html: string) {
+        const closingIndex = html.indexOf('>', 1);
+        const result = html.substring(0, closingIndex + 1);
+        const restOfHTML = html.substr(closingIndex + 1, html.length);
+        return {result, restOfHTML};
     }
 
     /**
@@ -94,11 +95,11 @@ class HTMLParser {
      * @param html
      * @returns {{result: string, restOfHTML: string}}
      */
-    extractTextContent(html: string) {
-        let textEndId = html.indexOf('<');
-        let result = html.substring(0, textEndId);
-        let restOfHTML = html.substring(textEndId);
-        return {result, restOfHTML}
+    public extractTextContent(html: string) {
+        const textEndId = html.indexOf('<');
+        const result = html.substring(0, textEndId);
+        const restOfHTML = html.substring(textEndId);
+        return {result, restOfHTML};
     }
 
     /**
@@ -106,20 +107,20 @@ class HTMLParser {
      * @param tagString
      * @returns {TagModel}
      */
-    parseTag(tagString: string) {
-        let attrs: AttributeModel[] = [];
-        let [match, tag, attributesStr] = tagString.match(/<(\w+)[\s+]?([^>]+)?>/);
+    public parseTag(tagString: string) {
+        const attrs: AttributeModel[] = [];
+        const [match, tag, attributesStr] = tagString.match(/<(\w+)[\s+]?([^>]+)?>/);
         if (attributesStr) {
-            let attrStrings = [];
-            attributesStr.replace(/((on:)?\w+[$="]\D[^"]*["])/g, (match, attrFrag) => {
+            const attrStrings = [];
+            attributesStr.replace(/((on:)?\w+[$="]\D[^"]*["])/gm, (attrString, attrFrag) => {
                 attrStrings.push(this.parseAttribute(attrFrag));
-                return match;
+                return attrString;
             });
-            for (let attr of attrStrings) {
+            for (const attr of attrStrings) {
                 attrs.push(attr);
             }
         }
-        return new TagModel(tag, attrs)
+        return new TagModel(tag, attrs);
     }
 
     /**
@@ -127,10 +128,10 @@ class HTMLParser {
      * @param attr
      * @returns {AttributeModel}
      */
-    parseAttribute(attr: string) {
+    public parseAttribute(attr: string) {
         let [name, value] = attr.split('=');
         value = (value) ? value.trim() : undefined;
-        value = (value) ? value.replace(/['"]+/g, '') : '';
+        value = (value) ? value.replace(/['"]+/gm, '') : '';
         return new AttributeModel(name, value);
     }
 
@@ -139,7 +140,7 @@ class HTMLParser {
      * @param text
      * @returns {TextNodeModel}
      */
-    parseText(text: string) {
+    public parseText(text: string) {
         return new TextNodeModel(text);
     }
 
@@ -148,23 +149,21 @@ class HTMLParser {
      * @param HTMLString
      * @returns {number}
      */
-    tagType(HTMLString: string): number {
+    public tagType(HTMLString: string): number {
         enum Types {
             Open = 1,
             Closing,
-            Text
+            Text,
         }
         let type = '';
         if (/^[<]\w/.test(HTMLString)) {
-            type = 'Open'
+            type = 'Open';
         } else if (/^[<]\/\w/.test(HTMLString)) {
-            type = 'Closing'
+            type = 'Closing';
         } else if (HTMLString.length > 0) {
-            type = 'Text'
+            type = 'Text';
         }
-        return Types[type]
+        return Types[type];
     }
 
 }
-
-export {HTMLParser}

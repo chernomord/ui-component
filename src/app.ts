@@ -1,8 +1,8 @@
-import {HTMLParser} from './component/parser';
 import {Controller} from './component/DOMModel';
+import {HTMLParser} from './component/parser';
 
-let parser = new HTMLParser();
-let template = `<section>
+const parser = new HTMLParser();
+const template = `<section>
 <div>
 <h1>{{title}}</h1>
 <h2>{{subtitle}}</h2>
@@ -17,18 +17,16 @@ let template = `<section>
 </div>
 </section>`;
 
-
 class TestCtrl extends Controller {
-    title = "Test playground";
-    subtitle = "Just to see results on the screen aside from tests";
-    hello() {
+    public title = 'Test playground';
+    public subtitle = 'Just to see results on the screen aside from tests';
+    public hello() {
         alert('Hello!');
     }
 }
 
-
-let model = parser.parseHTML(template);
-let controller = new TestCtrl();
-let element = model.render(controller);
+const model = parser.parseHTML(template);
+const controller = new TestCtrl();
+const element = model.render(controller);
 
 document.body.appendChild(element);
