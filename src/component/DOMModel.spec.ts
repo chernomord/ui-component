@@ -1,4 +1,9 @@
-import {TagModel, AttributeModel, TextNodeModel, Controller} from './DOMModel';
+import {
+    AttributeModel,
+    Controller,
+    TagModel,
+    TextNodeModel,
+} from './DOMModel';
 import {HTMLParser} from './parser';
 
 const cache = [];

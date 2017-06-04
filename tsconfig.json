@@ -10,8 +10,7 @@
       "jasmine"
     ],
     "typeRoots": [
-      "./node_modules/@types",
-      "./src"
+      "./node_modules/@types"
     ],
     "jsx": "react"
   },
