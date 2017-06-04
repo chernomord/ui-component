@@ -15,8 +15,8 @@ class AttributeModel {
      * Returns attribute Node
      * @returns {Attr}
      */
-    render(controller: Controller): Attr {
-        let attr = document.createAttribute(this.name);
+    public render(controller: Controller): Attr {
+        const attr = document.createAttribute(this.name);
         attr.value = parseBits.curlyBindings(this.value, controller);
         return attr;
     }
@@ -25,28 +25,25 @@ class AttributeModel {
 /**
  * Abstract Node Model class
  */
-class NodeModel {
-    parent: TagModel;
-    children: NodeModel[];
-    attrs: AttributeModel[];
-    name: string;
-    value: string;
+abstract class NodeModel {
+    public attrs: AttributeModel[];
+    public children: NodeModel[];
+    public parent: TagModel;
+    public name: string;
+    public value: string;
 
-    constructor() {
-    }
+    // constructor() {}
 
     /**
      * Renders node into DOM Node object
      */
-    render(controller: Controller = null): Node {
-        return
-    }
+    abstract render(controller: Controller): Node;
 
     /**
      * Gets parent of the Node
      * @returns {TagModel}
      */
-    getParent() {
+    public getParent(): TagModel {
         return this.parent;
     }
 }
@@ -56,12 +53,13 @@ class NodeModel {
  */
 class TextNodeModel extends NodeModel {
 
-    constructor(public value: string = '', public parent: TagModel = null) {
+    constructor(public value: string = '',
+                public parent: TagModel = null) {
         super();
     }
 
-    render(controller: Controller): Node {
-        let $textNode = document.createTextNode('');
+    public render(controller: Controller): Node {
+        const $textNode = document.createTextNode('');
         $textNode.nodeValue = parseBits.curlyBindings(this.value, controller);
         return $textNode;
     }
@@ -71,7 +69,7 @@ class TextNodeModel extends NodeModel {
  * Describes Element Node model
  */
 class TagModel extends NodeModel {
-    controller: Controller;
+    public controller: Controller;
 
     constructor(public name: string,
                 public attrs: AttributeModel[] = [],
@@ -84,7 +82,7 @@ class TagModel extends NodeModel {
      * Appends child Node and sets it's parent field to current Element model instance
      * @param element
      */
-    appendChild(element: NodeModel): void {
+    public appendChild(element: NodeModel): void {
         this.children.push(element);
         element.parent = this;
     }
@@ -94,18 +92,18 @@ class TagModel extends NodeModel {
      * @param controller {Controller}
      * @returns {HTMLElement}
      */
-    render(controller: Controller = null): HTMLElement {
-        let element = document.createElement(this.name);
+    public render(controller: Controller = null): HTMLElement {
+        const element = document.createElement(this.name);
         // add event handlers
-        for (let attr of this.attrs) {
+        for (const attr of this.attrs) {
             // handle attribute if it is event handler declaration
             if (attr.name.indexOf('on:') === 0) {
-                let eventName = 'on' + attr.name.substring(3);
-                let [fm, methodName, parameters] = attr.value.match(/(\w+)\((.*?)\)/);
-                let paramsArray = parameters.replace(/\s/gm, '').split(',');
+                const eventName = 'on' + attr.name.substring(3);
+                const [fm, methodName, parameters] = attr.value.match(/(\w+)\((.*?)\)/);
+                const paramsArray = parameters.replace(/\s/gm, '').split(',');
                 element[eventName] = function (this, event) {
                     // convert parameters names to point to controller's properties
-                    for (let i in paramsArray) {
+                    for (const i in paramsArray) {
                         switch (paramsArray[i]) {
                             case '$event':
                                 paramsArray[i] = event;
@@ -120,16 +118,16 @@ class TagModel extends NodeModel {
                     }
                     // call controller's method by extracted name with extracted parameters
                     controller[methodName].apply(controller, paramsArray);
-                }
+                };
             } else {
                 element.setAttributeNode(attr.render(controller));
             }
         }
-        for (let child of this.children) {
+        for (const child of this.children) {
             element.appendChild(child.render(controller));
         }
         return element;
     }
 }
 
-export {TagModel, TextNodeModel, AttributeModel, NodeModel, Controller}
+export {TagModel, TextNodeModel, AttributeModel, NodeModel, Controller};

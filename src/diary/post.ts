@@ -1,27 +1,22 @@
-interface PostData {
+interface IPostData {
     header;
     body;
     date;
 }
 
 export default class Post {
-    header: String;
-    body: String;
-    date: Date;
-    deleteEntryCallback: Function;
 
-    constructor(header: String, body: String, date = new Date(), deleteEntryCallback: Function) {
-        this.header = header;
-        this.body = body;
-        this.date = date;
-        this.deleteEntryCallback = deleteEntryCallback;
+    constructor(public header: string,
+                public body: string,
+                public date = new Date(),
+                public deleteEntryCallback: () => void) {
     }
 
-    getData(): PostData {
+    public getData(): IPostData {
         return {
-            header: this.header,
             body: this.body,
-            date: this.date
-        }
+            date: this.date,
+            header: this.header,
+        };
     }
 }

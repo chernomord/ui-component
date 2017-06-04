@@ -2,20 +2,20 @@ import Component from './component';
 
 describe('Component class Class', () => {
     it('Can be instantiated', () => {
-        let post = new Component('', {}, {});
+        const post = new Component('', {}, {});
         expect(post instanceof Component).toBe(true);
     });
 
     it('Can return some data', () => {
-        let post = new Component('', {lol: 34}, {});
-        let data = post.getData('lol');
+        const post = new Component('', {lol: 34}, {});
+        const data = post.getData('lol');
         expect(data).toEqual(34);
     });
 
     it('Can render template into DOM tree', () => {
-        let root = document.createElement('div');
-        let post = new Component('<h1>{{message}}</h1>', {message: 'Zodzog!'});
-        let element = post.render();
+        const root = document.createElement('div');
+        const post = new Component('<h1>{{message}}</h1>', {message: 'Zodzog!'});
+        const element = post.render();
         root.appendChild(element);
         // console.log(element);
         expect(element instanceof HTMLElement).toBe(true);
@@ -37,11 +37,11 @@ describe('Component class Class', () => {
     //     expect(event instanceof MouseEvent).toBe(true);
     // });
     xit('Can repeat html with data', () => {
-        let root = document.createElement('div');
-        let dataList = ['one', 'two', 'three'];
-        let template = `<div><p e-repeat="unit in dataList">{{unit}}</p></div>`;
-        let list = new Component(template, {dataList});
-        let element = list.render();
+        const root = document.createElement('div');
+        const dataList = ['one', 'two', 'three'];
+        const template = `<div><p e-repeat="unit in dataList">{{unit}}</p></div>`;
+        const list = new Component(template, {dataList});
+        const element = list.render();
         root.appendChild(element);
         expect(root.querySelector('p').innerHTML === 'one').toBe(true);
     });
