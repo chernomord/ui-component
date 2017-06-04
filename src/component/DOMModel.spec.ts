@@ -1,7 +1,7 @@
 import {TagModel, AttributeModel, TextNodeModel, Controller} from './DOMModel';
 import {HTMLParser} from './parser';
 
-let cache = [];
+const cache = [];
 function censorCircular(key, value) {
     if (typeof value === 'object' && value !== null) {
         if (cache.indexOf(value) !== -1) {
@@ -24,7 +24,7 @@ describe('Attribute model', () => {
     });
 
     it('should render into Attr Node', () => {
-        let attrNode = attributeWithValue.render();
+        const attrNode = attributeWithValue.render(new Controller());
         expect(attrNode instanceof Attr).toBe(true);
         expect(attrNode.name).toEqual('style');
         expect(attrNode.value).toEqual('border:0; color: black');
@@ -39,14 +39,14 @@ describe('Text Node model', () => {
     });
 
     it('should render into Text Node', () => {
-        let textNode = textNodeModel.render();
+        const textNode = textNodeModel.render(new Controller());
         expect(textNode instanceof Node).toBe(true);
         expect(textNode.nodeValue).toEqual('Text content');
     });
 });
 
 describe('Tag Node model', () => {
-    let attrs = [new AttributeModel('class', 'first second'), new AttributeModel('enabled')];
+    const attrs = [new AttributeModel('class', 'first second'), new AttributeModel('enabled')];
     const rootTagModel = new TagModel('div', attrs);
     const childTagModel = new TextNodeModel('child text');
     rootTagModel.appendChild(childTagModel);
@@ -64,29 +64,29 @@ describe('Tag Node model', () => {
     });
 
     it('should properly render itself', () => {
-        let html = rootTagModel.render();
+        const html = rootTagModel.render();
         expect(html.innerText).toEqual('child text');
     });
 
     it('should bind event handler', () => {
-        let div = new TagModel('div');
-        let attr = new AttributeModel('on:click', 'doIncrement()');
-        let tag = new TagModel('button', [attr]);
+        const div = new TagModel('div');
+        const attr = new AttributeModel('on:click', 'doIncrement()');
+        const tag = new TagModel('button', [attr]);
         div.appendChild(tag);
         class Bindings extends Controller {
-            increment = 0;
+            public increment = 0;
 
             constructor() {
                 super();
             }
 
-            doIncrement() {
+            public doIncrement() {
                 this.increment += 1;
             }
         }
-        let bindings = new Bindings();
-        let element = div.render(bindings);
-        let button = element.querySelector('button');
+        const bindings = new Bindings();
+        const element = div.render(bindings);
+        const button = element.querySelector('button');
         button.click();
         expect(bindings.increment).toEqual(1);
         button.click();
@@ -94,58 +94,59 @@ describe('Tag Node model', () => {
     });
 
     it('should inject DOM Event and other requested parameters into handler', () => {
-        let div = new TagModel('div');
-        let attr = new AttributeModel('on:click', 'handler($this, $event, intValue, stringValue)');
-        let tag = new TagModel('button', [attr]);
+        const div = new TagModel('div');
+        const attr = new AttributeModel('on:click', 'handler($this, $event, intValue, stringValue)');
+        const tag = new TagModel('button', [attr]);
         div.appendChild(tag);
         class Bindings extends Controller {
-            intValue = 0;
-            stringValue = 'Hello!';
-            result: {elm: HTMLElement, event: Event, int: Number, string: string};
+            public intValue = 0;
+            public stringValue = 'Hello!';
+            public result: {elm: HTMLElement, event: Event, int: number, myString: string};
 
             constructor() {
                 super();
             }
 
-            handler(elm: HTMLElement, event: Event, int: Number, string: string) {
-                this.result = {elm, event, int, string};
+            public handler(elm: HTMLElement, event: Event, int: number, myString: string) {
+                this.result = {elm, event, int, myString};
             }
         }
-        let bindings = new Bindings();
-        let element = div.render(bindings);
-        let button = element.querySelector('button');
+        const bindings = new Bindings();
+        const element = div.render(bindings);
+        const button = element.querySelector('button');
         button.click();
         expect(bindings.result.elm instanceof HTMLElement).toBeTruthy();
         expect(bindings.result.event instanceof Event).toBeTruthy();
         expect(bindings.result.int === 0).toBeTruthy();
-        expect(bindings.result.string === 'Hello!').toBeTruthy();
+        expect(bindings.result.myString === 'Hello!').toBeTruthy();
     });
 
     it('should parse data bindings', () => {
-        let HTML = `<div class="{{component}}"><h1>{{header}} bro!</h1><a href="{{link.href}}">{{link.name}}</a></div>`;
+        const HTML = `<div class="{{component}}"><h1>{{header}} bro!</h1><a href="{{link.href}}">{{link.name}}</a></div>`;
         class Bindings extends Controller {
-            component = 'myComponent';
-            header = 'Hey there';
-            link = {
+            public component = 'myComponent';
+            public header = 'Hey there';
+            public link = {
                 href: 'http://myurl.com',
-                name: 'my dynamic link'
-            }
+                name: 'my dynamic link',
+            };
         }
-        let parser = new HTMLParser();
-        let model = parser.parseHTML(HTML);
-        let controller = new Bindings();
-        let element = model.render(controller);
+        const parser = new HTMLParser();
+        const model = parser.parseHTML(HTML);
+        const controller = new Bindings();
+        const element = model.render(controller);
         expect(element.getAttribute('class')).toBe('myComponent');
-        expect(element.childNodes[0].textContent).toBe(controller.header + ' bro!');
-        expect(element.childNodes[1].textContent).toBe(controller.link.name);
-        expect(element.childNodes[1].getAttribute('href')).toBe(controller.link.href);
+        expect(element.children[0].textContent).toBe(controller.header + ' bro!');
+        expect(element.children[1].textContent).toBe(controller.link.name);
+        expect(element.children[1].getAttribute('href')).toBe(controller.link.href);
     });
 
     xit('can render repeated fragment', () => {
-        let HTML = `<div class="container">
+        const HTML = `<div class="container">
 <div class="element" n-for="element of elements">
 <a></a>
 </div>
-</div>`
-    })
+</div>`;
+    });
+
 });
