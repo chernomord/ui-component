@@ -25,8 +25,8 @@ class TestCtrl extends Controller {
     }
 }
 
-const model = parser.parseHTML(template);
+const view = parser.parseHTML(template);
 const controller = new TestCtrl();
-const element = model.render(controller);
+const instance = view.render(controller);
 
-document.body.appendChild(element);
+document.body.appendChild(instance);

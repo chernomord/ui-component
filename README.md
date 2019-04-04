@@ -1,13 +1,19 @@
-# Diary, local
+# Simple Component Oriented UI Library
 
-Personal project, an attempt to develop end user tool, a kind of journal, 
-and try out or polish some techs and concepts: TypeScript, DRY, KISS, TDD, OOP, MVC etc. 
-And to do so without the use of any web front-end JS libraries.
+Состоит из абстрактного контроллера и представления.
+
+Контроллер может содержать данные в своих свойствах.
+Представление - простейшая модель Virtual DOM осуществляющая связь данных контроллера и представления с последующей сборкой HTML фрагмента.
+
+Корневой файл:
+`src/app.ts` 
 
 ## Build
 `npm i`
 
 `npm run build`
+
+Open `dist/index.html` 
 
 ## Test
 `npm run test`
