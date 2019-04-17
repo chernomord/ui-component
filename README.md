@@ -1,12 +1,11 @@
-# Simple Component Oriented UI Library
+# Component Oriented UI Library
 
-Состоит из абстрактного контроллера и представления.
+Consists of:
+- Controller, provides data and methods for the View part
+- HTML text parser. Converts HTML text template to Virtual DOM.
+- Virtual DOM. A source from which DOM is rendered.
+- Component class that makes all of the above to work together.
 
-Контроллер может содержать данные в своих свойствах.
-Представление - простейшая модель Virtual DOM осуществляющая связь данных контроллера и представления с последующей сборкой HTML фрагмента.
-
-Корневой файл:
-`src/app.ts` 
 
 ## Build
 `npm i`

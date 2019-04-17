@@ -1,7 +1,7 @@
 import {Controller} from './controller';
 
 const parseBits = {
-    curlyBindings: function (inputValue: string, controller: Controller) {
+    curlyBindings: (inputValue: string, controller: Controller) => {
         let resultValue: string;
         if (inputValue.indexOf('{{') > -1) {
             resultValue = inputValue.replace(/{{(.*?)}}/g, (m, binding) => this.jsonPath(binding, controller));
@@ -9,13 +9,13 @@ const parseBits = {
         return resultValue || inputValue;
     },
     jsonPath: (path: string, object: Controller) => {
-        let pathArr = path.split('.');
+        const pathArr = path.split('.');
         let cursor = object;
-        pathArr.map((val, i, arr) => {
+        pathArr.map((val) => {
             cursor = cursor[val];
         });
         return cursor;
-    }
+    },
 };
 
-export {parseBits}
+export {parseBits};
