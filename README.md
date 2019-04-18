@@ -1,4 +1,4 @@
-# Component Oriented UI Library
+# Component-oriented UI Library
 
 Consists of:
 - Controller, provides data and methods for the View part
